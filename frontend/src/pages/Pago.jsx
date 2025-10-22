@@ -17,21 +17,33 @@ export function Pago() {
   }
 
   const handlePagoMercadoPago = () => {
-    setTimeout(() => {
-      // Generar ID único para el ticket
-      const ticketId = `TKT-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
-      
-      navigate(`/confirmacion/${eventId}`, { 
-        state: { 
-          ticketQuantities, 
-          totalPrice, 
-          customerData,
-          ticketId, // ← ID único del ticket
-          purchaseDate: new Date().toISOString()
-        } 
-      })
-    }, 2000)
-  }
+  setTimeout(() => {
+    // Generar IDs únicos para CADA ticket
+    const ticketsWithIds = {};
+    
+    Object.entries(ticketQuantities || {}).forEach(([ticketTypeId, quantity]) => {
+      if (quantity > 0) {
+        ticketsWithIds[ticketTypeId] = {
+          quantity: quantity,
+          // Generar ID único para CADA unidad del mismo tipo
+          ticketIds: Array.from({ length: quantity }, (_, i) => 
+            `TKT-${Date.now()}-${ticketTypeId}-${i}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`
+          )
+        };
+      }
+    });
+
+    navigate(`/confirmacion/${eventId}`, { 
+      state: { 
+        ticketQuantities, 
+        totalPrice, 
+        customerData,
+        ticketsWithIds, // ← Nuevo objeto con IDs individuales
+        purchaseDate: new Date().toISOString()
+      } 
+    });
+  }, 2000);
+};
 
   return (
     <div className="min-h-screen bg-gray-50">
