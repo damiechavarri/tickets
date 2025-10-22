@@ -18,8 +18,17 @@ export function Pago() {
 
   const handlePagoMercadoPago = () => {
     setTimeout(() => {
+      // Generar ID único para el ticket
+      const ticketId = `TKT-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
+      
       navigate(`/confirmacion/${eventId}`, { 
-        state: { ticketQuantities, totalPrice, customerData } 
+        state: { 
+          ticketQuantities, 
+          totalPrice, 
+          customerData,
+          ticketId, // ← ID único del ticket
+          purchaseDate: new Date().toISOString()
+        } 
       })
     }, 2000)
   }
@@ -75,6 +84,16 @@ export function Pago() {
               <span className="font-bold">Mercado Pago</span>
               <span>${totalPrice || 0}</span>
             </button>
+
+            {/* Información adicional */}
+            <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <h4 className="font-semibold text-blue-800 mb-2">📧 Recibirás por email:</h4>
+              <ul className="text-sm text-blue-700 space-y-1">
+                <li>• Confirmación de tu compra</li>
+                <li>• Código QR único para el evento</li>
+                <li>• Detalles de tu reserva</li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
