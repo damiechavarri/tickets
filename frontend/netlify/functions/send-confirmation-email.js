@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const QRCode = require('qrcode');
 
 exports.handler = async (event, context) => {
   // Solo permitir POST
@@ -30,7 +31,8 @@ exports.handler = async (event, context) => {
       orderId,
       tickets,
       totalPrice,
-      purchaseDate
+      purchaseDate,
+      ticketsWithIds // ← AGREGAR esto para los IDs individuales
     } = JSON.parse(event.body);
 
     console.log('📧 Enviando email a:', to);
@@ -47,67 +49,182 @@ exports.handler = async (event, context) => {
     // Verificar credenciales
     await transporter.verify();
 
-    // HTML del email
+    // Función para generar QR
+    const generarQR = async (ticketId, ticketType) => {
+      try {
+        const qrData = `TICKET:${ticketId}|EVENTO:${eventName}|TIPO:${ticketType}`;
+        const qrDataURL = await QRCode.toDataURL(qrData, {
+          width: 120,
+          margin: 1,
+          color: {
+            dark: '#000000',
+            light: '#FFFFFF'
+          }
+        });
+        return qrDataURL;
+      } catch (error) {
+        console.error('Error generando QR:', error);
+        return null;
+      }
+    };
+
+    // Generar QRs para todos los tickets
+    let qrSections = '';
+    if (ticketsWithIds) {
+      for (const [ticketTypeId, ticketData] of Object.entries(ticketsWithIds)) {
+        const ticketType = ticketData.type || ticketTypeId;
+        let ticketQRs = '';
+        
+        // Generar QR para cada ticket individual
+        for (let i = 0; i < ticketData.ticketIds.length; i++) {
+          const ticketId = ticketData.ticketIds[i];
+          const qrImage = await generarQR(ticketId, ticketType);
+          
+          if (qrImage) {
+            ticketQRs += `
+              <div style="text-align: center; display: inline-block; margin: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; background: white;">
+                <p style="margin: 0 0 5px 0; font-size: 12px; font-weight: bold;">Ticket #${i + 1}</p>
+                <img src="${qrImage}" alt="QR ${ticketId}" style="width: 100px; height: 100px;" />
+                <p style="margin: 5px 0 0 0; font-size: 9px; color: #666;">${ticketId.substring(0, 12)}...</p>
+              </div>
+            `;
+          }
+        }
+
+        if (ticketQRs) {
+          qrSections += `
+            <div style="margin: 15px 0;">
+              <h4 style="color: #10B981; margin-bottom: 10px;">${ticketType} (${ticketData.quantity} entrada${ticketData.quantity !== 1 ? 's' : ''})</h4>
+              <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
+                ${ticketQRs}
+              </div>
+            </div>
+          `;
+        }
+      }
+    }
+
+    // HTML del email CON QRs
     const emailHtml = `
       <!DOCTYPE html>
       <html>
       <head>
+        <meta charset="utf-8">
         <style>
-          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: #10B981; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-          .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
-          .ticket { background: white; border-left: 4px solid #10B981; padding: 15px; margin: 15px 0; }
-          .footer { text-align: center; margin-top: 20px; color: #666; font-size: 12px; }
+          body { 
+            font-family: Arial, sans-serif; 
+            line-height: 1.6; 
+            color: #333; 
+            margin: 0; 
+            padding: 0; 
+            background: #f5f5f5;
+          }
+          .container { 
+            max-width: 600px; 
+            margin: 0 auto; 
+            background: white;
+          }
+          .header { 
+            background: #10B981; 
+            color: white; 
+            padding: 30px; 
+            text-align: center; 
+          }
+          .content { 
+            padding: 30px; 
+          }
+          .ticket { 
+            background: white; 
+            border-left: 4px solid #10B981; 
+            padding: 20px; 
+            margin: 20px 0; 
+            border-radius: 0 8px 8px 0;
+          }
+          .qr-section {
+            background: #f8fffb;
+            border: 2px solid #10B981;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+          }
+          .footer { 
+            text-align: center; 
+            margin-top: 30px; 
+            color: #666; 
+            font-size: 12px; 
+            padding: 20px;
+            border-top: 1px solid #eee;
+          }
+          .instruction-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+          }
         </style>
       </head>
       <body>
         <div class="container">
           <div class="header">
-            <h1>🎉 ¡Compra Confirmada!</h1>
-            <h2>${eventName}</h2>
+            <h1 style="margin: 0; font-size: 28px;">🎉 ¡Compra Confirmada!</h1>
+            <h2 style="margin: 10px 0 0 0; font-weight: normal;">${eventName}</h2>
           </div>
           
           <div class="content">
-            <h2>Hola ${customerName},</h2>
+            <h2 style="color: #333;">Hola ${customerName},</h2>
             <p>Tu compra ha sido procesada exitosamente. Aquí tienes los detalles:</p>
             
             <div class="ticket">
-              <h3>📋 Información de la Compra</h3>
+              <h3 style="color: #10B981; margin-top: 0;">📋 Información de la Compra</h3>
               <p><strong>Número de Orden:</strong> ${orderId}</p>
               <p><strong>Evento:</strong> ${eventName}</p>
               <p><strong>Fecha de compra:</strong> ${new Date(purchaseDate).toLocaleDateString('es-ES')}</p>
               <p><strong>Total:</strong> $${totalPrice}</p>
             </div>
 
-            <div class="ticket">
-              <h3>🎫 Tickets Reservados</h3>
-              ${tickets.map(ticket => `
-                <p><strong>${ticket.type}:</strong> ${ticket.quantity} entrada${ticket.quantity !== 1 ? 's' : ''}</p>
-              `).join('')}
+            <!-- SECCIÓN DE QRs -->
+            ${qrSections ? `
+            <div class="qr-section">
+              <h3 style="color: #10B981; text-align: center; margin-top: 0;">🎫 Tus Códigos QR</h3>
+              ${qrSections}
+              <div class="instruction-box">
+                <p style="margin: 0; font-weight: bold;">📝 Instrucciones importantes:</p>
+                <ul style="margin: 10px 0 0 0; padding-left: 20px;">
+                  <li>Cada código QR es válido para una persona</li>
+                  <li>Presenta el QR correspondiente en la entrada</li>
+                  <li>Los códigos son únicos e intransferibles</li>
+                </ul>
+              </div>
             </div>
+            ` : ''}
 
             <div class="ticket">
-              <h3>📝 Instrucciones Importantes</h3>
-              <ul>
-                <li>Presenta este email en la entrada del evento</li>
-                <li>Llega 30 minutos antes del horario</li>
-                <li>Trae una identificación</li>
-                <li>Cada ticket es personal e intransferible</li>
+              <h3 style="color: #10B981; margin-top: 0;">📝 Información del Evento</h3>
+              <p><strong>📍 Lugar:</strong> Restaurante Pirque</p>
+              <p><strong>🗓️ Fecha:</strong> 11 de Octubre, 2025</p>
+              <p><strong>🕐 Horario:</strong> 19:00 horas</p>
+              <p><strong>⏰ Recomendación:</strong> Llega 30 minutos antes</p>
+            </div>
+
+            <div class="instruction-box">
+              <p style="margin: 0; font-weight: bold;">💡 No olvides:</p>
+              <ul style="margin: 10px 0 0 0; padding-left: 20px;">
+                <li>Traer una identificación</li>
+                <li>Conservar este email como comprobante</li>
+                <li>Cada ticket es personal</li>
               </ul>
             </div>
-
-            <p><strong>📍 Lugar:</strong> Restaurante Pirque</p>
-            <p><strong>🕐 Fecha:</strong> 11 de Octubre, 2025 - 19:00</p>
             
-            <p>Si tienes alguna pregunta, responde a este email.</p>
-            
-            <p>¡Te esperamos!</p>
-            <p><strong>El equipo de Piramide Tickets</strong></p>
+            <p style="text-align: center; margin-top: 30px;">
+              <strong>¡Te esperamos!</strong><br>
+              El equipo de Piramide Tickets
+            </p>
           </div>
           
           <div class="footer">
             <p>Este es un email automático, por favor no respondas directamente.</p>
+            <p>Si tienes preguntas, contacta a: ${process.env.GMAIL_USER}</p>
           </div>
         </div>
       </body>
@@ -124,14 +241,14 @@ exports.handler = async (event, context) => {
 
     // Enviar email
     const result = await transporter.sendMail(mailOptions);
-    console.log('✅ Email enviado:', result.messageId);
+    console.log('✅ Email enviado con QRs:', result.messageId);
 
     return {
       statusCode: 200,
       headers,
       body: JSON.stringify({ 
         success: true, 
-        message: 'Email enviado correctamente',
+        message: 'Email con QRs enviado correctamente',
         messageId: result.messageId
       })
     };
