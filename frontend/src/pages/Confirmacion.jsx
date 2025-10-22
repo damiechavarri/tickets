@@ -83,11 +83,72 @@ export function Confirmacion() {
     generarMultiplesQRs();
   }, [ticketsWithIds, eventId]);
 
+
+
   // Calcular estadísticas
   const totalTickets = ticketsWithIds ? 
     Object.values(ticketsWithIds).reduce((sum, ticket) => sum + ticket.quantity, 0) : 0;
 
   const qrCodesGenerated = Object.keys(qrCodes).length;
+
+// Agrega esto DESPUÉS del useEffect que genera los QRs y ANTES del return
+
+// useEffect para enviar email automáticamente
+useEffect(() => {
+  console.log('🔍 Condiciones para email:');
+  console.log('🔍 customerData?.email:', customerData?.email);
+  console.log('🔍 loading:', loading);
+  console.log('🔍 qrCodesGenerated:', qrCodesGenerated);
+  console.log('🔍 totalTickets:', totalTickets);
+  console.log('🔍 Se enviará email?:', customerData?.email && !loading && qrCodesGenerated === totalTickets);
+
+  if (customerData?.email && !loading && qrCodesGenerated === totalTickets) {
+    console.log('✅ CONDICIONES CUMPLIDAS - Enviando email');
+    enviarEmailConfirmacion();
+  }
+}, [loading, customerData, qrCodesGenerated, totalTickets]);
+
+// Y asegúrate de que esta función esté definida:
+const enviarEmailConfirmacion = async () => {
+  if (!customerData?.email) return;
+
+  try {
+    console.log('📧 Iniciando envío de email...');
+
+    const emailData = {
+      to: customerData.email,
+      customerName: customerData.nombre,
+      eventName: event.name,
+      orderId: orderId,
+      tickets: Object.entries(ticketsWithIds || {}).map(([ticketTypeId, ticketData]) => ({
+        type: ticketData.type,
+        quantity: ticketData.quantity
+      })),
+      totalPrice: totalPrice,
+      purchaseDate: purchaseDate
+    };
+
+    console.log('📧 Datos para email:', emailData);
+
+    const response = await fetch('/.netlify/functions/send-confirmation-email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(emailData),
+    });
+
+    const result = await response.json();
+    
+    if (result.success) {
+      console.log('✅ Email enviado correctamente');
+    } else {
+      console.error('❌ Error enviando email:', result.error);
+    }
+  } catch (error) {
+    console.error('❌ Error enviando email:', error);
+  }
+};
 
   if (!event || !state) {
     return (
