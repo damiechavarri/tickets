@@ -114,6 +114,7 @@ const enviarEmailConfirmacion = async () => {
 
   try {
     console.log('📧 Iniciando envío de email...');
+    console.log('🔍 ticketsWithIds para email:', ticketsWithIds); // ← LOG IMPORTANTE
 
     const emailData = {
       to: customerData.email,
@@ -124,13 +125,12 @@ const enviarEmailConfirmacion = async () => {
         type: ticketData.type,
         quantity: ticketData.quantity
       })),
-      ticketsWithIds: ticketsWithIds, // ← AGREGAR ESTO para los IDs individuales
+      ticketsWithIds: ticketsWithIds, // ← ESTA LÍNEA ES CLAVE
       totalPrice: totalPrice,
       purchaseDate: purchaseDate
     };
 
-    console.log('📧 Datos para email:', emailData);
-    console.log('📧 Tickets con IDs:', ticketsWithIds);
+    console.log('📧 Datos COMPLETOS para email:', emailData);
 
     const response = await fetch('/.netlify/functions/send-confirmation-email', {
       method: 'POST',
@@ -143,7 +143,7 @@ const enviarEmailConfirmacion = async () => {
     const result = await response.json();
     
     if (result.success) {
-      console.log('✅ Email enviado correctamente');
+      console.log('✅ Email enviado correctamente con QRs');
     } else {
       console.error('❌ Error enviando email:', result.error);
     }
