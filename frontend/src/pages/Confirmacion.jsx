@@ -1,18 +1,14 @@
-// En el useEffect, cambia la llamada API:
-const ticketsConQR = await Promise.all(
-  ticketsUnicos.map(async (ticket) => {
-    try {
-      const { data } = await axios.get(
-        `${BACKEND_URL}/.netlify/functions/generate-qr/${ticket.id}`
-      )
-      return { 
-        ...ticket, 
-        qrUrl: data.qrDataURL,
-        qrImageUrl: data.qrImageUrl
-      }
-    } catch (error) {
-      console.error('Error obteniendo QR:', error)
-      return { ...ticket, qrUrl: null, qrImageUrl: null }
-    }
-  })
-)
+// src/pages/Confirmacion.jsx
+import React from 'react';
+
+const Confirmacion = () => {
+  return (
+    <div className="confirmacion-container">
+      <h1>Confirmación Exitosa</h1>
+      <p>Tu ticket ha sido confirmado correctamente.</p>
+      {/* Agrega aquí el contenido específico de tu página de confirmación */}
+    </div>
+  );
+};
+
+export default Confirmacion; // ← ESTA LÍNEA ES ESENCIAL
