@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 
-function Confirmacion() {
+export function Confirmacion() {
   const { eventId } = useParams();
   
   console.log('🔍 Confirmacion component mounted');
@@ -20,4 +20,3 @@ function Confirmacion() {
   );
 }
 
-export default Confirmacion;
