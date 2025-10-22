@@ -18,28 +18,34 @@ export function Pago() {
 
   const handlePagoMercadoPago = () => {
   setTimeout(() => {
-    // Generar IDs únicos para CADA ticket
+    // Generar IDs únicos UNA SOLA VEZ
     const ticketsWithIds = {};
+    const orderId = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
     
     Object.entries(ticketQuantities || {}).forEach(([ticketTypeId, quantity]) => {
       if (quantity > 0) {
+        const ticketType = event.tickets.find(t => t.id === ticketTypeId)?.type || ticketTypeId;
         ticketsWithIds[ticketTypeId] = {
           quantity: quantity,
-          // Generar ID único para CADA unidad del mismo tipo
+          type: ticketType,
+          // Generar IDs únicos para CADA ticket
           ticketIds: Array.from({ length: quantity }, (_, i) => 
-            `TKT-${Date.now()}-${ticketTypeId}-${i}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`
+            `${orderId}-${ticketTypeId}-${i + 1}`
           )
         };
       }
     });
+
+    console.log('🎫 Generated tickets:', ticketsWithIds);
 
     navigate(`/confirmacion/${eventId}`, { 
       state: { 
         ticketQuantities, 
         totalPrice, 
         customerData,
-        ticketsWithIds, // ← Nuevo objeto con IDs individuales
-        purchaseDate: new Date().toISOString()
+        ticketsWithIds, // ← IDs generados UNA vez
+        purchaseDate: new Date().toISOString(),
+        orderId: orderId
       } 
     });
   }, 2000);
