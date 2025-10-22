@@ -132,7 +132,7 @@ const enviarEmailConfirmacion = async () => {
 
     console.log('📧 Datos COMPLETOS para email:', emailData);
 
-    const response = await fetch('/.api/send-confirmation-email', {
+    const response = await fetch('/api/send-confirmation-email', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
