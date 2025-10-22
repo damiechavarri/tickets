@@ -1,0 +1,2 @@
+# En tu proyecto, crea el archivo:
+echo "/*    /index.html   200" > public/_redirects

@@ -1,14 +1,23 @@
-// src/pages/Confirmacion.jsx
-import React from 'react';
+import { useParams } from 'react-router-dom';
 
-const Confirmacion = () => {
+function Confirmacion() {
+  const { eventId } = useParams();
+  
+  console.log('🔍 Confirmacion component mounted');
+  console.log('🔍 eventId:', eventId);
+  
+  // Si no ves estos logs, el componente no se está montando
+  
   return (
-    <div className="confirmacion-container">
-      <h1>Confirmación Exitosa</h1>
-      <p>Tu ticket ha sido confirmado correctamente.</p>
-      {/* Agrega aquí el contenido específico de tu página de confirmación */}
+    <div style={{ padding: '40px', textAlign: 'center', backgroundColor: '#f0f0f0', minHeight: '100vh' }}>
+      <h1 style={{ color: 'green' }}>✅ Pago Confirmado</h1>
+      <p>Evento: {eventId || 'No especificado'}</p>
+      <p>Tu reserva ha sido procesada exitosamente.</p>
+      <button onClick={() => window.location.href = '/'}>
+        Volver al Inicio
+      </button>
     </div>
   );
-};
+}
 
-export default Confirmacion; // ← ESTA LÍNEA ES ESENCIAL
+export default Confirmacion;

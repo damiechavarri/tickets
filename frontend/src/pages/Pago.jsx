@@ -4,7 +4,7 @@ import { Header } from '../components/Layout/Header'
 import { BotonVolver } from '../components/Shared/BotonVolver'
 
 export function Pago() {
-  const { eventId } = useParams()
+  const { eventoId } = useParams()
   const navigate = useNavigate()
   const location = useLocation()
   const event = events[eventId]

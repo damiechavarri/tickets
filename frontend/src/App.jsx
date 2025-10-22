@@ -1,9 +1,10 @@
-import { Routes, Route } from 'react-router-dom'
+import { HashRouter as Router } from 'react-router-dom';
 import { Inicio } from './pages/Inicio'
 import { Entradas } from './pages/Entradas'
 import { Cliente } from './pages/Cliente'
 import { Pago } from './pages/Pago'
-import Confirmacion from './pages/Confirmacion.jsx';
+import { Confirmacion } from './pages/Confirmacion.jsx';
+
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/cliente/:eventId" element={<Cliente />} />
         <Route path="/pago/:eventId" element={<Pago />} />
         <Route path="/confirmacion" element={<Confirmacion />} />
+        <Route path="/test" element={<Test />} />
       </Routes>
     </div>
   )

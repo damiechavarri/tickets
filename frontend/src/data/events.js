@@ -3,7 +3,7 @@ export const events = {
     id: "evento1",
     name: "Piramide Patagonia 4",
     info: "EggiEvans DubmasterMarcos DamiLopez ",
-    image: "/src/assets/fondo.png",
+    image: "/fondo.png",  // ← Cambiado a ruta desde public/
     date: "11-10-2025",
     time: "19:00",
     location: "Restaurante Pirque",
