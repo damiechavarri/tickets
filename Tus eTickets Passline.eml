@@ -1,0 +1,229 @@
+Delivered-To: damiechavarri@gmail.com
+Received: by 2002:a05:6402:55:b0:634:8ad9:ea6c with SMTP id f21csp931379edu;
+        Fri, 26 Sep 2025 15:44:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF9q4gl8JcbuEnbtl2bCgOA3mcQAKyP8sl9DYwYJrPanFKlq+HeT8njggGsMsD4um2HbsGs
+X-Received: by 2002:ad4:594f:0:b0:791:c933:ad15 with SMTP id 6a1803df08f44-7fc4066e395mr139243466d6.57.1758926674621;
+        Fri, 26 Sep 2025 15:44:34 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1758926674; cv=none;
+        d=google.com; s=arc-20240605;
+        b=Ijs8Ue40r4I0zlSchKuyb8J5P/sAgjIA7rGJ4NisOCEn/Js6/yeJe9/plGzlU8Dxja
+         tVMI/EOrTyvb6iaG24Kj310boRHhb5DgPPZz6dLtvWwLRq+krWrFMo3j2lAkmtyAxjq0
+         +5t1ZDSlFl2YAaOf4PNHp7E/dqNMjBY0n5BlQivaFaExvvvWFSOOagMM6GSeT4tFGmBG
+         fEVBQxGPNht4vhT6vP2TAcL32q3tkyTT47U1sVyNH6nZXkN1/fZXGP7i2PtiHtEW6Xvq
+         JpDOAcFf3vyI1LVPjd5s3OiEgkJI7jJvP8IpiwVzfm58sHcAJfoRD76b0/UnCgCMXBl7
+         HNwQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=feedback-id:content-transfer-encoding:mime-version:message-id
+         :subject:from:to:date:dkim-signature:dkim-signature;
+        bh=R+FlbaeK3v+wUeL2yFXq77/w1HL91PtjxKJY+70LWWg=;
+        fh=RtV6jdrYZ1s6jGnQ1RJoMW0J//U5uX3Azy6KppZBBlA=;
+        b=hwkpuZpBDn8sS1M45hA48YkmOtweqKmc86uGmx982LOMM1xMONAQmXdL8Bjj3XLunF
+         Mggl5gefl3BwPptaLju5BalXMEXaL/k/BkPSsQsMbdgnsySFvVx2Zb2bHltDT5oZpTWY
+         4V8oKpSW2Rx5zUKgf/cxhVB5tvhzCjWMBUS3+mkP1eoPHAnZ377IGXMbHW/Kw02pXSCv
+         dCwtUaqRi+uK8lyCf9IugJ7jJHwHZFUXdxy+ew0qchw7om2CEF9UcsSXxaHUt4v0sb1z
+         Ae+Pp9Rr8jZ7KRKxzhW5vhpb34NUOy4DEIrGdOCDnwEhFQQrRLbARpML0/38+wyRG9ue
+         0BiQ==;
+        dara=google.com
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@passline.email header.s=h3utwemglyfwr4vnu2oso7y4pv2vp5mw header.b=fFWnzPIY;
+       dkim=pass header.i=@amazonses.com header.s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw header.b=hhY9bcAg;
+       spf=pass (google.com: domain of 01000199883318e4-853782fb-3e46-43a1-961a-1f533b0a222b-000000@mailing.passline.email designates 54.240.14.56 as permitted sender) smtp.mailfrom=01000199883318e4-853782fb-3e46-43a1-961a-1f533b0a222b-000000@mailing.passline.email;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=passline.email
+Return-Path: <01000199883318e4-853782fb-3e46-43a1-961a-1f533b0a222b-000000@mailing.passline.email>
+Received: from a14-56.smtp-out.amazonses.com (a14-56.smtp-out.amazonses.com. [54.240.14.56])
+        by mx.google.com with ESMTPS id 6a1803df08f44-80185ebb9f7si25834316d6.580.2025.09.26.15.44.34
+        for <damiechavarri@gmail.com>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Sep 2025 15:44:34 -0700 (PDT)
+Received-SPF: pass (google.com: domain of 01000199883318e4-853782fb-3e46-43a1-961a-1f533b0a222b-000000@mailing.passline.email designates 54.240.14.56 as permitted sender) client-ip=54.240.14.56;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@passline.email header.s=h3utwemglyfwr4vnu2oso7y4pv2vp5mw header.b=fFWnzPIY;
+       dkim=pass header.i=@amazonses.com header.s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw header.b=hhY9bcAg;
+       spf=pass (google.com: domain of 01000199883318e4-853782fb-3e46-43a1-961a-1f533b0a222b-000000@mailing.passline.email designates 54.240.14.56 as permitted sender) smtp.mailfrom=01000199883318e4-853782fb-3e46-43a1-961a-1f533b0a222b-000000@mailing.passline.email;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=passline.email
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=h3utwemglyfwr4vnu2oso7y4pv2vp5mw; d=passline.email; t=1758926674;
+	h=Date:To:From:Subject:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+	bh=Bt1RcvhDMP7XkSj+8M7+uK931+nlNxcnXqW92j9dUkk=;
+	b=fFWnzPIYfOYjQPBbh1W6KjCoaGDsjYLXoXZdYAKyz10E12gh00BM+MizhgU9mtY6
+	WPvSSRGCCLTvFbgxyoQe8fMgSmHiF4lUyvCaA2lrkyrLRMyRGV5vRoBz9j56hmwSSyK
+	dcX52uq7b1xpuaPOZ5aw1IjFuHGxALGbksHvE5JLtX2Q1c2S+jOP7eX/E+CO6lHPMuI
+	Oeamt3oCY8EWYpKa+cLA8tWbkAZlQyxBE8u/nUDUAswYhh2Zej8jTcmKu3vck48UwqJ
+	SU9mtLKwFHJ24k5UP7SKZ7V4Bk1S7PqZ2FxWcYn+5Utosq5zbO0KDJxKmxCKxgsfx16
+	UEsqPgEyxg==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1758926674;
+	h=Date:To:From:Subject:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID;
+	bh=Bt1RcvhDMP7XkSj+8M7+uK931+nlNxcnXqW92j9dUkk=;
+	b=hhY9bcAgYZIcxhYDZ/UGWPer8mVFId7SdqvnX3Rg0e6iO20GJa8A7m2x11Y9kgqc
+	ANUcukzJTRIrmlNn7BVQezTwL8v5BtKvMlkirIhFR5+ObNRz+c5WYHdvTIr336OcTps
+	uOLmPmgrFAEqHi0IGT3OVXiHR/0yBNRn9YEH4oFA=
+Date: Fri, 26 Sep 2025 22:44:34 +0000
+To: damiechavarri@gmail.com
+From: Passline <purchase@passline.email>
+Subject: Tus eTickets Passline
+Message-ID: <01000199883318e4-853782fb-3e46-43a1-961a-1f533b0a222b-000000@email.amazonses.com>
+X-Mailer: PHPMailer 6.5.1 (https://github.com/PHPMailer/PHPMailer)
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Feedback-ID: ::1.us-east-1.NHWCM3izF8MJGb7tDHO9uU6GkXAtrMj5NxF1qNAJl7w=:AmazonSES
+X-SES-Outgoing: 2025.09.26-54.240.14.56
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Passline.com</title>
+  <link rel="shortcut icon" href="https://www.passline.com/favicon.ico" type="image/x-icon" />
+  <style type="text/css">
+	body { background: #f0f1f4; margin-left: 0px; margin-top: 10px; margin-right: 0px; margin-bottom: 10px; font-family:Arial, Helvetica, sans-serif;font-size:12px; }
+	a { color:#000; }
+	h2{ font-size:24px; font-weight:bold; font-family:Arial, Helvetica, sans-serif; text-align: center; color:#445566;}
+	p{ font-size:15px; font-weight:normal; /*text-align: center;*/ color:#445566;/* line-height:22px;*/}
+	td.linea{ border-bottom:1px solid #CCC; padding-bottom:4px; text-align:left !important;}
+	span{ color:#888a98; font-size:11px;}
+	.link-a{ font-size:14px; font-weight:normal; color:#2792ba; text-align: center; line-height:22px; text-decoration:underline;}
+	.box-evento{ margin:10px 15px 30px 15px; float:left; border-bottom:3px solid #CCC;}
+	.box-evento img{float:left;}
+	.btn-verde{ background: #1abc9c; border-bottom: 2px solid #147f51; border-radius: 6px; color: #fff; font-family: Arial,Helvetica,sans-serif; font-size: 14px; font-weight: bold; padding: 10px 20px; text-transform:uppercase; display:block; text-align:center; text-decoration:none;}
+	.btn-verde:hover{ background: #147f51; border-bottom: 2px solid #0d623d;}
+	.btn-verde1 {background: #1abc9c; border-bottom: 2px solid #147f51; border-radius: 6px; color: #fff; font-family: Arial,Helvetica,sans-serif; font-size: 14px; font-weight: bold; padding: 10px 20px; text-transform:uppercase; display:block; text-align:center; text-decoration:none;}
+	.btn-verde2 {background: #1abc9c; border-bottom: 2px solid #147f51; border-radius:0 0 6px 6px; color: #fff; font-family: Arial,Helvetica,sans-serif; font-size: 14px; font-weight: bold; padding: 10px 20px; text-transform:uppercase; display:block; text-align:center; text-decoration:none;}
+	.btn-rojo {background: #F00; border-bottom: 2px solid #FFF; border-radius:6px 6px 6px 6px; color: #fff; font-family: Arial,Helvetica,sans-serif; font-size: 14px; font-weight: bold; padding: 10px 20px; text-transform:uppercase; display:block; text-align:center; text-decoration:none;}
+	.micro-ticket{ background:#eeeeee; -webkit-border-radius: 5px 5px 0 0; border-radius: 5px 5px 0 0; border:1px solid #ccc;}
+  </style>
+</head>
+<body>
+  <table width="640" border="0" align="center" cellpadding="0" cellspacing="0" style="border-left:1px dotted #ccc; border-right:1px dotted #ccc; border-top:1px dotted #ccc; border-bottom:1px dotted #ccc;">
+		<!-- seccion header -->
+					<tr>
+			  <td><img src="https://66c9b51e266cb041d4a3-a968f8ce42d6587bef99a75eafb71d90.ssl.cf1.rackcdn.com/header.jpg" alt="header" border="0" /></td>
+			</tr>
+				<!-- seccion header -->
+		<!-- seccion 1 - saludo -->
+		<tr>
+		  <td bgcolor="#FFFFFF" style="padding:0;">
+		  	<div style="text-align: right;margin: 0">
+		  		<h5 style="font-size: 7px; margin:1px; color: grey">IDEM 01</h5>
+		  	</div>
+		  </td>
+		</tr>
+		<tr>
+		  <td bgcolor="#FFFFFF" style="padding:20px 60px; border-bottom:1px dotted #ccc;">
+												<h2>Dami Lopez, ¡Compra realizada con éxito!</h2>
+									  </td>
+		</tr>
+		<!-- /seccion 1 - saludo -->
+
+		<!-- seccion 2 - tickets comprados -->
+					    <tr>
+					<td bgcolor="#FFFFFF" style="padding:20px 40px;  border-bottom:1px dotted #ccc;">
+					  <table width="100%" height="172" border="0" cellpadding="10" cellspacing="0" class="micro-ticket" >
+							<tr>
+							  <td width="100%" height="270" valign="top" align="center" style="vertical-align: initial;">
+																	<img src="https://www.passline.com/imagenes/eventos/-594114-rec.jpg" alt="TSOM More Club" width="210" height="210" style="vertical-align: top; margin-bottom: 5px;" />&nbsp;&nbsp;&nbsp;&nbsp;
+																		<img src="https://www.passline.com/imagenes/qr/-Syz6DG39ToGtXw4TUqfrw@@.png" width="210" height="210" alt="eTicket para TSOM More Club" style="padding: 0px 0px 20px 20px"/>
+				              						              									  </td>
+							</tr>
+							<tr>
+								<td>
+									<table width="100%" border="0" cellpadding="0" cellspacing="0">
+										<tr>
+											<td height="0" valign="top" style="text-align: center;">
+											    <p style="line-height:16px; margin:0 0 10px 0!important;"><strong>TSOM More Club</strong></p>
+											    <p style="margin:0 0 5px 0 !important; font-size: 24px;">Tanda 1 
+											    $8.000											    .-</p>
+
+						                         
+												    <p style=" margin:0 0 5px 0 !important;"><b>ID Compra</b>: 109852800 </p> 
+												    <p style=" margin:0 0 5px 0 !important;">ID ticket: 135631738 </p> 
+												 
+												  <p style=" margin:0 0 5px 0 !important;"> More Club Dorrego  442</p>
+																							</td>
+									  	</tr>
+																																							</table>
+							  </td>
+							</tr>
+					  </table>
+					  					</td>
+			    </tr>
+				<!-- Wallet buttons -->
+									<tr>
+						<td style="background-color: #fff; padding:15px 40px; border-bottom:1px dotted #ccc;">
+							<p style="text-align: center; margin: 0px;">
+								<a style="text-decoration: none;" href="https://www.passline.com/add-google-wallet/-Syz6DG39ToGtXw4TUqfrw@@&b=e09a760cc1ff2e094c0d387208acb337&c=rezhKLRdjWUpC5YGxiFaSA@@">
+									<span style="text-decoration:none">
+										<img src="https://www.passline.com/imagenes/add-google-wallet/esES_add_to_google_wallet_add-wallet-badge_2.png" alt="Add Ticket to Google Wallet">
+									</span>	
+								</a>
+								&nbsp;&nbsp;&nbsp;
+								<a style="text-decoration: none;" href="https://www.passline.com/add-apple-wallet/-Syz6DG39ToGtXw4TUqfrw@@&b=e09a760cc1ff2e094c0d387208acb337&c=rezhKLRdjWUpC5YGxiFaSA@@">
+									<span style="text-decoration:none">	
+										<img width="207px;" height="55px;" src="https://www.passline.com/imagenes/add-apple-wallet/ES_Add_to_Apple_Wallet_2_1.png" alt="Add Ticket to Apple Wallet">
+									</span>
+								</a>
+							</p>
+						</td>
+					</tr>
+								<!-- end Wallet buttons -->
+			
+		<!-- Seccion banners -->
+					
+									<tr>
+						<td>
+							<a href="https://www.passline.com/eventos/tsom-more-club">
+							  <img src="https://www.passline.com/imagenes/banners_correos_eventos/banner_correo-tsom-more-club-2025-09-09_182439.jpg" alt="footer" border="0" width="650" style="display: block" />
+							</a>
+						</td>
+			  		</tr>
+			 			<!-- Seccion banners -->
+
+		
+
+ 		<!-- seccion 4 - Terminos si aplican -->
+				<!-- /seccion 4 - Terminos si aplican -->
+
+
+
+				  <tr>
+				<td bgcolor="#FFFFFF" style="padding:15px 40px; border-bottom:1px dotted #ccc;">                
+					<p style="text-align:center;">Produce: Luciano Pisani - 2038532710-3 - argentina</p>
+				</td>
+		  </tr>
+				<!-- /seccion 2 - tickets comprados -->
+	  	
+		<!-- Banner Anticipa -->
+				<!-- /Banner Anticipa -->
+	  	
+		<!-- Banner Específico del Evento -->
+				<!-- /Banner Específico del Evento -->
+
+		<!-- seccion 3 - Algunos Consejos -->
+
+		 		
+		<tr>
+			<td bgcolor="#FFFFFF" style="padding:20px 40px; border-bottom:1px dotted #ccc;">
+			  						<h2>Algunos consejos:</h2>
+					<ul>
+				  					  						        		<li><p style="text-align:left;">Recuerda presentar tu eTicket en el acceso del evento con tu teléfono.</p></li>
+			        				        	<li><p style="text-align:left;">Siempre podrás acceder a tus compras o eTickets desde nuestra web.</p></li>
+			        				        		<li><p style="text-align:left;">Recuerda llevar tus eTickets abiertos en tu celular.</p></li>
+			        				        	
+				  	 
+		            	<li><p style="text-align:left;">Descargá tu factura electrónica <a href="http://www.passline.com/boleta.php?a=uKzNYmQGaMQk7eg5z_B7qw@@" target="_blank">aquí.</a></p></li>
+		        				</ul>
+			</td>
+		</tr>
+				<!-- /seccion 3 - Algunos Consejos -->
+	     
+
+		<!-- seccion footer -->
+					<tr>
+			  <td><img src="https://66c9b51e266cb041d4a3-a968f8ce42d6587bef99a75eafb71d90.ssl.cf1.rackcdn.com/footer.jpg" alt="footer" border="0" style="display:block"/></td>
+			</tr>
+				<!-- /seccion footer -->
+  </table>
+</body>
+</html>
+
