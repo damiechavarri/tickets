@@ -17,7 +17,7 @@ function App() {
           <Route path="/pago/:eventId" element={<Pago />} />
           
           {/* ✅ AGREGAR ruta dinámica */}
-          <Route path="/confirmacion/:eventId" element={<Confirmacion />} />
+   
           <Route path="/confirmacion" element={<Confirmacion />} />
         </Routes>
       </Router>
