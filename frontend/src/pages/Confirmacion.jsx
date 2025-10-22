@@ -124,11 +124,13 @@ const enviarEmailConfirmacion = async () => {
         type: ticketData.type,
         quantity: ticketData.quantity
       })),
+      ticketsWithIds: ticketsWithIds, // ← AGREGAR ESTO para los IDs individuales
       totalPrice: totalPrice,
       purchaseDate: purchaseDate
     };
 
     console.log('📧 Datos para email:', emailData);
+    console.log('📧 Tickets con IDs:', ticketsWithIds);
 
     const response = await fetch('/.netlify/functions/send-confirmation-email', {
       method: 'POST',
