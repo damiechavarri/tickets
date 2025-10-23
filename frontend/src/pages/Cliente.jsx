@@ -4,7 +4,7 @@ import { events } from '../data/events'
 import { Header } from '../components/Layout/Header'
 import { BotonVolver } from '../components/Shared/BotonVolver'
 
-export function Cliente() {
+function Cliente() {
   const { eventId } = useParams()
   const navigate = useNavigate()
   const location = useLocation()
@@ -89,3 +89,5 @@ const handleSubmit = (e) => {
     </div>
   )
 }
+
+export default Cliente;

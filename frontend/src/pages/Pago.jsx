@@ -3,7 +3,7 @@ import { events } from '../data/events'
 import { Header } from '../components/Layout/Header'
 import { BotonVolver } from '../components/Shared/BotonVolver'
 
-export function Pago() {
+function Pago() {
   const { eventId } = useParams()
   const navigate = useNavigate()
   const location = useLocation()
@@ -118,3 +118,5 @@ export function Pago() {
     </div>
   )
 }
+
+export default Pago;

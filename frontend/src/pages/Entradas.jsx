@@ -5,7 +5,7 @@ import { Header } from '../components/Layout/Header'
 import { BotonVolver } from '../components/Shared/BotonVolver'
 
 
-export function Entradas() {
+function Entradas() {
   const { eventId } = useParams()
   const navigate = useNavigate()
   const event = events[eventId]
@@ -88,3 +88,5 @@ export function Entradas() {
     </div>
   )
 }
+
+export default Entradas;

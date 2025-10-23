@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { events } from '../data/events'
 
-export function Inicio() {
+function Inicio() {
   const navigate = useNavigate()
   const event = events.evento1
 
@@ -34,3 +34,5 @@ export function Inicio() {
     </div>
   )
 }
+
+export default Inicio;
