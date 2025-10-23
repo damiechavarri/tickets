@@ -1,39 +1,57 @@
-const nodemailer = require('nodemailer');
+// api/send-confirmation-email.js
+import nodemailer from 'nodemailer';
 
-exports.handler = async (event, context) => {
-  console.log('✅ FUNCIÓN CARGADA - CommonJS');
-  
-  const headers = {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*'
-  };
+export default async function handler(req, res) {
+  // CORS headers
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers, body: '' };
+  // Handle preflight
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
   }
 
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method Not Allowed' }) };
+  // GET para testing
+  if (req.method === 'GET') {
+    return res.status(200).json({ 
+      status: 'success',
+      message: '✅ API funcionando en Vercel',
+      timestamp: new Date().toISOString()
+    });
   }
 
-  try {
-    const body = JSON.parse(event.body);
-    console.log('📧 Email simulado para:', body.to);
-    
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify({ 
+  // POST para enviar emails
+  if (req.method === 'POST') {
+    try {
+      const { to, subject, userName, ticketNumber, eventName } = req.body;
+      
+      console.log('📧 Datos recibidos:', { to, subject, userName, ticketNumber, eventName });
+      
+      // Respuesta simulada por ahora
+      return res.status(200).json({ 
         success: true, 
-        message: 'Email simulado - función funciona'
-      })
-    };
-
-  } catch (error) {
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ error: error.message })
-    };
+        message: '✅ Email simulado enviado correctamente',
+        data: {
+          to,
+          subject, 
+          userName,
+          ticketNumber,
+          eventName,
+          timestamp: new Date().toISOString()
+        }
+      });
+      
+    } catch (error) {
+      console.error('❌ Error:', error);
+      return res.status(500).json({ 
+        success: false,
+        error: 'Error interno del servidor',
+        details: error.message 
+      });
+    }
   }
-};
+
+  return res.status(405).json({ error: 'Method Not Allowed' });
+}
