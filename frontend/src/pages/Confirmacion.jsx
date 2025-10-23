@@ -1,68 +1,67 @@
-// frontend/api/send-confirmation-email.js
-console.log('🔧 FUNCIÓN CARGANDO...');
+// src/pages/Confirmacion.jsx
+import { useState } from 'react';
 
-exports.handler = async (event, context) => {
-  console.log('✅ FUNCIÓN EJECUTADA - Vercel');
-  
-  const headers = {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS, GET'
+const Confirmacion = () => {
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+
+  const handleSendConfirmation = async () => {
+    setLoading(true);
+    setMessage('');
+    
+    try {
+      // Llamar a tu API route de Vercel
+      const response = await fetch('/api/send-confirmation-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          to: 'usuario@ejemplo.com',
+          subject: 'Confirmación de Ticket',
+          userName: 'Juan Pérez',
+          ticketNumber: 'TKT-001',
+          eventName: 'Concierto de Rock'
+        }),
+      });
+      
+      const result = await response.json();
+      console.log('Respuesta de API:', result);
+      
+      if (result.success) {
+        setMessage('✅ Email enviado correctamente');
+      } else {
+        setMessage('❌ Error: ' + (result.error || 'Error desconocido'));
+      }
+    } catch (error) {
+      console.error('Error llamando a la API:', error);
+      setMessage('❌ Error de conexión con el servidor');
+    }
+    
+    setLoading(false);
   };
 
-  try {
-    console.log('📨 Método:', event.httpMethod);
-    
-    // Preflight
-    if (event.httpMethod === 'OPTIONS') {
-      return { statusCode: 200, headers, body: '' };
-    }
-
-    // GET para testing
-    if (event.httpMethod === 'GET') {
-      return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify({ 
-          status: 'success',
-          message: 'Función funcionando en Vercel',
-          timestamp: new Date().toISOString()
-        })
-      };
-    }
-
-    // POST
-    if (event.httpMethod === 'POST') {
-      const body = JSON.parse(event.body || '{}');
-      console.log('📧 Datos recibidos:', body);
+  return (
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-4">Confirmación de Ticket</h2>
       
-      return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify({ 
-          success: true, 
-          message: 'Email simulado enviado correctamente',
-          received: body
-        })
-      };
-    }
-
-    return {
-      statusCode: 405,
-      headers,
-      body: JSON.stringify({ error: 'Method Not Allowed' })
-    };
-
-  } catch (error) {
-    console.error('❌ Error en función:', error);
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ 
-        error: 'Error interno',
-        details: error.message 
-      })
-    };
-  }
+      <button 
+        onClick={handleSendConfirmation} 
+        disabled={loading}
+        className="bg-blue-500 text-white px-4 py-2 rounded disabled:bg-gray-400"
+      >
+        {loading ? 'Enviando...' : 'Confirmar y Enviar Email'}
+      </button>
+      
+      {message && (
+        <p className={`mt-4 p-2 rounded ${
+          message.includes('✅') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+        }`}>
+          {message}
+        </p>
+      )}
+    </div>
+  );
 };
+
+export default Confirmacion;
