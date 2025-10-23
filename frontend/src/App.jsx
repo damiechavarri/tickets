@@ -1,8 +1,8 @@
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
-import { Inicio } from './pages/Inicio'
-import { Entradas } from './pages/Entradas'
-import { Cliente } from './pages/Cliente'
-import { Pago } from './pages/Pago'
+// import { Inicio } from './pages/Inicio'
+//import { Entradas } from './pages/Entradas'
+//import { Cliente } from './pages/Cliente'
+//import { Pago } from './pages/Pago'
 import  Confirmacion  from './pages/Confirmacion.jsx';
 
 function App() {
