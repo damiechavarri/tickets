@@ -45,6 +45,12 @@ const Confirmacion = () => {
       
       setVentaData(ventaCompleta);
 
+console.log('📤 Enviando email con datos:', {
+  to: ventaData.cliente.email,
+  eventName: ventaData.evento,
+  quantity: ventaData.cantidad,
+  ticketsCount: ventaData.ticketsIndividuales?.length
+});
       // Enviar email automáticamente
       try {
         const response = await fetch('/api/send-confirmation-email', {
@@ -80,6 +86,7 @@ const Confirmacion = () => {
       } finally {
         setLoading(false);
       }
+      console.log('📨 Respuesta email:', result);
     };
 
     enviarEmailAutomatico();
