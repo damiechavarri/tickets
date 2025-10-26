@@ -1,5 +1,5 @@
 // api/send-confirmation-email.js
-import nodemailer from 'nodemailer';
+const nodemailer = require('nodemailer');
 
 export default async function handler(req, res) {
   // CORS headers
