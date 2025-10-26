@@ -5,8 +5,8 @@ import { Header } from '../components/Layout/Header';
 import { BotonVolver } from '../components/Shared/BotonVolver';
 
 const Confirmacion = () => {
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(true); // Cambio: loading inicial true
+  const [emailStatus, setEmailStatus] = useState('enviando'); // 'enviando', 'enviado', 'error'
   const [ventaData, setVentaData] = useState(null);
   
   const { eventId } = useParams();
@@ -14,9 +14,14 @@ const Confirmacion = () => {
   const location = useLocation();
   const event = events[eventId];
 
-  // Obtener datos de la venta desde location.state
+  // Efecto para enviar email automáticamente al cargar
   useEffect(() => {
-    if (location.state) {
+    const enviarEmailAutomatico = async () => {
+      if (!location.state) {
+        navigate('/');
+        return;
+      }
+
       const { ticketQuantities, totalPrice, customerData, ticketsWithIds, purchaseDate, orderId } = location.state;
       
       // Construir objeto completo de venta
@@ -40,23 +45,64 @@ const Confirmacion = () => {
       };
       
       setVentaData(ventaCompleta);
-      console.log('📦 Datos de venta recibidos:', ventaCompleta);
-    } else {
-      // Si no hay datos, redirigir al inicio
-      navigate('/');
-    }
+
+      // Enviar email automáticamente
+      try {
+        const response = await fetch('/api/send-confirmation-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            to: ventaCompleta.cliente.email,
+            subject: `✅ Confirmación de Entrada - ${ventaCompleta.evento}`,
+            userName: ventaCompleta.cliente.nombre,
+            ticketNumber: ventaCompleta.orderId,
+            eventName: ventaCompleta.evento,
+            eventDate: ventaCompleta.fecha,
+            eventTime: ventaCompleta.hora,
+            eventLocation: ventaCompleta.ubicacion,
+            quantity: ventaCompleta.cantidad,
+            totalAmount: ventaCompleta.total,
+            tickets: ventaCompleta.tickets,
+            purchaseDate: ventaCompleta.purchaseDate,
+            qrData: ventaCompleta.orderId
+          }),
+        });
+        
+        const result = await response.json();
+        console.log('📧 Respuesta de API email:', result);
+        
+        if (result.success) {
+          setEmailStatus('enviado');
+          console.log('✅ Email enviado automáticamente');
+        } else {
+          setEmailStatus('error');
+          console.error('❌ Error enviando email:', result.error);
+        }
+      } catch (error) {
+        console.error('Error llamando a la API:', error);
+        setEmailStatus('error');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    enviarEmailAutomatico();
   }, [location.state, event, eventId, navigate]);
 
   const generarQR = (ticketId) => {
     return `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(ticketId)}&margin=10&format=png`;
   };
 
-  const handleSendConfirmation = async () => {
+  const handleNewPurchase = () => {
+    navigate('/');
+  };
+
+  const handleRetryEmail = async () => {
     if (!ventaData) return;
     
-    setLoading(true);
-    setMessage('');
-    
+    setEmailStatus('enviando');
     try {
       const response = await fetch('/api/send-confirmation-email', {
         method: 'POST',
@@ -76,36 +122,44 @@ const Confirmacion = () => {
           totalAmount: ventaData.total,
           tickets: ventaData.tickets,
           purchaseDate: ventaData.purchaseDate,
-          qrData: ventaData.orderId // Usar orderId para el QR
+          qrData: ventaData.orderId
         }),
       });
       
       const result = await response.json();
-      console.log('📧 Respuesta de API email:', result);
-      
       if (result.success) {
-        setMessage('✅ Email enviado correctamente');
+        setEmailStatus('enviado');
       } else {
-        setMessage('❌ Error: ' + (result.error || 'Error desconocido'));
+        setEmailStatus('error');
       }
     } catch (error) {
-      console.error('Error llamando a la API:', error);
-      setMessage('❌ Error de conexión con el servidor');
+      setEmailStatus('error');
     }
-    
-    setLoading(false);
   };
 
-  const handleNewPurchase = () => {
-    navigate('/');
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Confirmando tu compra...</p>
+          <p className="text-sm text-gray-500 mt-2">Enviando email de confirmación</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!ventaData || !event) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Cargando confirmación...</p>
+          <p className="text-red-600">Error al cargar la confirmación</p>
+          <button 
+            onClick={() => navigate('/')}
+            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Volver al inicio
+          </button>
         </div>
       </div>
     );
@@ -126,6 +180,36 @@ const Confirmacion = () => {
           <div className="mt-2 text-sm bg-green-600 inline-block px-3 py-1 rounded-full">
             Orden: {ventaData.orderId}
           </div>
+        </div>
+
+        {/* Estado del email */}
+        <div className={`mb-6 p-4 rounded-lg text-center ${
+          emailStatus === 'enviando' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
+          emailStatus === 'enviado' ? 'bg-green-100 text-green-800 border border-green-200' :
+          'bg-red-100 text-red-800 border border-red-200'
+        }`}>
+          {emailStatus === 'enviando' && (
+            <div className="flex items-center justify-center gap-2">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-800"></div>
+              Enviando comprobante por email...
+            </div>
+          )}
+          {emailStatus === 'enviado' && (
+            <div className="flex items-center justify-center gap-2">
+              ✅ Comprobante enviado a: <strong>{ventaData.cliente.email}</strong>
+            </div>
+          )}
+          {emailStatus === 'error' && (
+            <div className="flex flex-col gap-2">
+              <div>❌ Error al enviar el email</div>
+              <button 
+                onClick={handleRetryEmail}
+                className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600"
+              >
+                Reintentar envío
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
@@ -197,52 +281,22 @@ const Confirmacion = () => {
           </div>
         </div>
 
-        {/* Acciones */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-xl font-bold mb-4 text-gray-800">📧 Envío de confirmación</h2>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <button 
-              onClick={handleSendConfirmation} 
-              disabled={loading}
-              className="bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 transition duration-200 disabled:bg-gray-400 flex items-center gap-2"
-            >
-              {loading ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  Enviando...
-                </>
-              ) : (
-                <>
-                  📧 Enviar comprobante por email
-                </>
-              )}
-            </button>
-            
-            <button 
-              onClick={handleNewPurchase}
-              className="bg-green-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 transition duration-200 flex items-center gap-2"
-            >
-              🏠 Realizar nueva compra
-            </button>
-          </div>
-          
-          {message && (
-            <div className={`mt-4 p-3 rounded-lg text-center ${
-              message.includes('✅') ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-red-100 text-red-800 border border-red-200'
-            }`}>
-              {message}
-            </div>
-          )}
+        {/* Acción principal */}
+        <div className="bg-white rounded-lg shadow-lg p-6 text-center">
+          <button 
+            onClick={handleNewPurchase}
+            className="bg-green-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-600 transition duration-200 flex items-center gap-2 mx-auto"
+          >
+            🏠 Realizar nueva compra
+          </button>
 
           {/* Información adicional */}
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200 text-left">
             <h4 className="font-semibold text-blue-800 mb-2">ℹ️ Información importante:</h4>
             <ul className="text-sm text-blue-700 space-y-1">
               <li>• Guarda este código QR, es tu entrada al evento</li>
-              <li>• Llega 30 minutos antes del horario indicado</li>
-              <li>• Presenta identificación junto con el código QR</li>
-              <li>• El email incluirá todos los detalles de tu compra</li>
+              <li>• Solo para mayores de 18 años</li>
+              <li>• Revisa tu email {ventaData.cliente.email} para los detalles completos</li>
             </ul>
           </div>
         </div>
