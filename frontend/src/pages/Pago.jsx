@@ -18,32 +18,38 @@ function Pago() {
 
   const handlePagoMercadoPago = () => {
   setTimeout(() => {
-    // Generar IDs únicos UNA SOLA VEZ
-    const ticketsWithIds = {};
+    // Generar tickets individuales con IDs únicos
+    const ticketsIndividuales = [];
     const orderId = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
     
     Object.entries(ticketQuantities || {}).forEach(([ticketTypeId, quantity]) => {
       if (quantity > 0) {
-        const ticketType = event.tickets.find(t => t.id === ticketTypeId)?.type || ticketTypeId;
-        ticketsWithIds[ticketTypeId] = {
-          quantity: quantity,
-          type: ticketType,
-          // Generar IDs únicos para CADA ticket
-          ticketIds: Array.from({ length: quantity }, (_, i) => 
-            `${orderId}-${ticketTypeId}-${i + 1}`
-          )
-        };
+        const ticketType = event.tickets.find(t => t.id === ticketTypeId);
+        
+        // Generar UN ticket individual por cada entrada comprada
+        for (let i = 1; i <= quantity; i++) {
+          const ticketId = `${orderId}-${ticketTypeId}-${i}`;
+          ticketsIndividuales.push({
+            id: ticketId,
+            type: ticketType?.type || ticketTypeId,
+            price: ticketType?.price || 0,
+            ticketTypeId: ticketTypeId,
+            orderId: orderId,
+            sequence: i,
+            totalTickets: quantity
+          });
+        }
       }
     });
 
-    console.log('🎫 Generated tickets:', ticketsWithIds);
+    console.log('🎫 Tickets individuales generados:', ticketsIndividuales);
 
     navigate(`/confirmacion/${eventId}`, { 
       state: { 
         ticketQuantities, 
         totalPrice, 
         customerData,
-        ticketsWithIds, // ← IDs generados UNA vez
+        ticketsIndividuales, // ← CAMBIO: usar ticketsIndividuales
         purchaseDate: new Date().toISOString(),
         orderId: orderId
       } 
